@@ -1,4 +1,4 @@
-import os
+import os, uuid
 import xlrd
 from xlutils.copy import copy
 import xlwt
@@ -10,8 +10,24 @@ import re
 import time 
 import datetime
 from dateutil.parser import parse
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
 
 
+def uploadfiletoAzureBlob(file, filename):
+    try:
+        print("Azure Blob storage v" + __version__ + " - Python quickstart sample")
+        connect_str = 'YOUR AZURE BLOB CONN STRING'
+        blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+        container_name = 'YOUR CONTAINER NAME IN BLOB STORAGE'
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=filename)
+
+        print("\nUploading to Azure Storage as blob:\n\t" + file)
+
+        with open(file, "rb") as data:
+            blob_client.upload_blob(data)
+    except Exception as ex:
+        print('Exception:')
+        print(ex)
 
 def getdatefromfilename(filename):
     new_string = re.findall('Rent Ready -(.*)$', filename)
@@ -106,4 +122,5 @@ for p5 in xlsfiles3:
     pathandfilename = path2 + p5
     wholenameandpath = path2 + wholename
     os.rename(pathandfilename, wholenameandpath)
-    
+    uploadfiletoAzureBlob(wholenameandpath, wholename)
+
