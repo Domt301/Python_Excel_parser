@@ -29,22 +29,23 @@ def uploadfiletoAzureBlob(file, filename):
         print('Exception:')
         print(ex)
 
+#parse date from file name string
 def getdatefromfilename(filename):
-    new_string = re.findall('Rent Ready -(.*)$', filename)
+    new_string = re.findall('Name -(.*)$', filename)
     new_string = new_string[0].strip()
     new_string = new_string[0:7]
     conv=parse(new_string)
     new_string = conv.strftime('%m%d%Y')
     return new_string
 
-
+#return interpolated string
 def getnamestringusingcityanddate(city,date):
-    filenamestring = f'Rent Ready Sales Report {city} {date}.xlsx'
+    filenamestring = f'Atlanta.xlsx'
     return filenamestring
 
-
+#finds a city in your file name or returns Charlotte
 def getcityfromfilename(filename):
-    new_string = re.findall('RENT READY(.*)$', filename)
+    new_string = re.findall('Your test string(.*)$', filename)
     new_string = new_string[0].strip()
     new_string = new_string.replace(" ", "")
     new_string = new_string.replace(".xlsx", "")
@@ -77,7 +78,7 @@ for f in xlsfiles:
 path2 = 'C:/excelfiles/New_Files/'
 for root,dir,files in os.walk(path2, topdown=False):
     xlsfiles2=[t for t in files]
-
+#rename files to xlsx to interact with openpyxl
 for p3 in xlsfiles2:
     new_stringer = getcityfromfilename(p3)
     datefromname= getdatefromfilename(p3)
@@ -91,7 +92,7 @@ for p3 in xlsfiles2:
 
 for root,dir,files in os.walk(path2, topdown=False):
     xlsfiles3=[d for d in files]
-
+#delete columns and format cells
 for p4 in xlsfiles3:
     filepathcomplete= path2 + p4
     book = openpyxl.load_workbook(filepathcomplete)
@@ -114,7 +115,7 @@ for p4 in xlsfiles3:
 
 for root,dir,files in os.walk(path2, topdown=False):
     xlsfiles3=[d for d in files]
-
+#rename files using methods defined above then call function to upload to azure blob storage
 for p5 in xlsfiles3:
     new_stringer = getcityfromfilename(p5)
     datefromname= getdatefromfilename(p5)
